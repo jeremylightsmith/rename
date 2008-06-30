@@ -1,36 +1,45 @@
 #!/usr/bin/env ruby
 
-def File.write(file, contents)
-    File.open(file, 'w') {|f| f << contents}
+def rename(dir, find, replace, test_run)
+  Dir.foreach(dir) do |old_name|
+    if old_name =~ find
+      new_name = old_name.gsub(find, replace)
+
+      if test_run
+        puts "      '#{old_name}' ==> '#{new_name}'"
+      else
+        File.rename(dir + '/' + old_name, dir + '/' + new_name)
+      end
+    end
+  end
 end
 
-def rename(dir, find, replace, test_run)
-    Dir.foreach(dir) do |old_name|
-        if old_name =~ find
-            new_name = old_name.gsub(find, replace)
-
-            if test_run
-                puts "      '#{old_name}' ==> '#{new_name}'"
-            else
-                File.rename(dir + '/' + old_name, dir + '/' + new_name)
-            end
-        end
+def recursive_rename(dir, find, replace, test_run)
+  rename(dir, find, replace, test_run)
+  Dir.foreach(dir) do |name|
+    child_dir = "#{dir}/#{name}"
+    if name != '.' && name != '..' && File.lstat(child_dir).directory?
+      recursive_rename(child_dir, find, replace, test_run)
     end
+  end    
 end
 
 def ask(question)
-    puts question
-    $stdin.gets[0..0].downcase == 'y'
+  puts question
+  $stdin.gets[0..0].downcase == 'y'
 end
 
-find = Regexp.new(ARGV[0]) if ARGV[0]
-replace = ARGV[1]
+method = (ARGV.first == "-r" && ARGV.shift) ? :recursive_rename : :rename
+find = Regexp.new(ARGV.shift) if ARGV.first
+replace = ARGV.shift
 
 if !find or !replace
-    puts 'usage: rename <find> <replace>'
+  puts 'usage: rename [-r] <find pattern> <replace pattern>
+
+example: rename -r "\.JPG" ".jpg"'
 
 else
-    puts "renaming #{find} to #{replace}"
-    rename '.', find, replace, true
-    rename '.', find, replace, false if ask "do it for real? [y/n]"
+  puts "renaming #{find} to #{replace}"
+  send method, '.', find, replace, true
+  send method, '.', find, replace, false if ask "do it for real? [y/n]"
 end
