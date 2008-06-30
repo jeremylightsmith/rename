@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+
+def File.write(file, contents)
+    File.open(file, 'w') {|f| f << contents}
+end
+
+def rename(dir, find, replace, test_run)
+    Dir.foreach(dir) do |old_name|
+        if old_name =~ find
+            new_name = old_name.gsub(find, replace)
+
+            if test_run
+                puts "      '#{old_name}' ==> '#{new_name}'"
+            else
+                File.rename(dir + '/' + old_name, dir + '/' + new_name)
+            end
+        end
+    end
+end
+
+def ask(question)
+    puts question
+    $stdin.gets[0..0].downcase == 'y'
+end
+
+find = Regexp.new(ARGV[0]) if ARGV[0]
+replace = ARGV[1]
+
+if !find or !replace
+    puts 'usage: rename <find> <replace>'
+
+else
+    puts "renaming #{find} to #{replace}"
+    rename '.', find, replace, true
+    rename '.', find, replace, false if ask "do it for real? [y/n]"
+end

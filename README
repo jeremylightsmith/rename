@@ -1,0 +1,25 @@
+= Project: Rename
+
+== Description
+
+Rename is a command line script written in ruby to rename all files in a directory (or subdirectories) using regex's.
+
+== Usage
+
+  rename [-r] <find_pattern> <replace_pattern>
+
+== Examples
+
+Standardize the file extensions of all jpegs in this directory and below
+
+  rename -r "\.(JPG|jpeg)" ".jpg"
+
+== Contact
+
+Author::     Jeremy Lightsmith
+Email::      jeremy.lightsmith@gmail.com
+License::    LGPL License
+
+== Home Page
+
+http://onemanswalk.com
