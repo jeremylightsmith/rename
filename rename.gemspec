@@ -16,4 +16,5 @@ Gem::Specification.new do |s|
   s.rubyforge_project = %q{rename}
   s.rubygems_version = %q{1.2.0}
   s.summary = %q{command line script written in ruby to rename all files in a directory (or subdirectories) using regex's}
+  s.homepage = "http://onemanswalk.com/"
 end
