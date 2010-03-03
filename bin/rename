@@ -2,6 +2,8 @@
 
 def rename(dir, find, replace, test_run)
   Dir.foreach(dir) do |old_name|
+    next if old_name =~ /^\./
+    
     if old_name =~ find
       new_name = old_name.gsub(find, replace)
 
